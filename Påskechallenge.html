@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Påsketreningsplan</title>
+
+<style>
+:root{
+  --rask-green:#0b5d3b;
+  --rask-light:#2bb673;
+  --accent:#c8a85b;
+}
+
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#f5f7f6;
+}
+
+header{
+  background:var(--rask-green);
+  color:white;
+  padding:16px;
+  text-align:center;
+}
+
+.logo{
+  height:60px;
+  margin-bottom:10px;
+}
+
+.name-input{
+  margin-top:10px;
+  padding:6px;
+  border-radius:6px;
+  border:none;
+}
+
+.wrapper{
+  max-width:1100px;
+  margin:auto;
+  padding:16px;
+}
+
+.exercise{
+  display:grid;
+  grid-template-columns:70px 1fr;
+  gap:12px;
+  margin-bottom:18px;
+  align-items:center;
+}
+
+.bar{
+  height:130px;
+  width:50px;
+  background:#eee;
+  border-radius:10px;
+  display:flex;
+  align-items:flex-end;
+  overflow:hidden;
+  position:relative;
+}
+
+.fill{
+  width:100%;
+  height:0%;
+  background:var(--rask-light);
+  transition:.3s;
+}
+
+.star{
+  position:absolute;
+  top:-10px;
+  right:-6px;
+  font-size:24px;
+  opacity:0;
+}
+
+.star.show{opacity:1;}
+
+.mini{
+  height:6px;
+  background:#eee;
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:8px;
+}
+
+.mini div{
+  height:100%;
+  width:0%;
+  background:var(--rask-light);
+}
+
+button{
+  border:none;
+  border-radius:8px;
+  padding:6px 10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.plus{background:var(--accent);}
+.minus{background:var(--rask-green);color:white;}
+
+.checkbox-area{
+  margin-top:30px;
+}
+
+.goal-form{
+  margin-top:30px;
+}
+
+input[type=number]{
+  width:80px;
+  padding:4px;
+}
+
+.egg{
+  font-size:18px;
+  margin-left:6px;
+}
+
+#motivation{
+  text-align:center;
+  font-weight:bold;
+  color:var(--rask-green);
+  margin-top:20px;
+}
+
+#bigMessage{
+  position:fixed;
+  top:40%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:60px;
+  font-weight:900;
+  color:var(--rask-green);
+  display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<img class="logo" src="https://www.raskfotball.no/wp-content/uploads/2020/03/rask-logo.png">
+
+<h2 id="title">Påsketreningsplan</h2>
+
+<input class="name-input" id="nameInput" placeholder="Skriv fornavn">
+
+</header>
+
+<div class="wrapper" id="exercises"></div>
+
+<div id="motivation"></div>
+
+<div class="wrapper checkbox-area">
+
+<h3>Utholdenhet – 3 forskjellige dager</h3>
+
+<label><input type="checkbox" id="run"> Rolig løpetur minst 5 km / 30 min</label><br>
+<label><input type="checkbox" id="sprint"> 20 spurter i oppoverbakke</label><br>
+<label><input type="checkbox" id="interval"> Intervall løping (4 × 4 min)</label>
+
+</div>
+
+<div class="wrapper goal-form">
+
+<h3>Juster mål (grenser)</h3>
+
+<div id="goalControls"></div>
+
+</div>
+
+<div id="bigMessage">BRA JOBBA!</div>
+
+<script>
+
+const STORAGE_KEY="rask_easter_plan";
+
+const MOTIVATION=[
+"Fantastisk innsats!",
+"Sterkt jobbet!",
+"Du blir sterkere!",
+"Rått!",
+"Kjempebra!",
+"Fortsett sånn!",
+"Dette lover bra!"
+];
+
+let config={
+ pushups:{label:"Pushups",goal:250,step:10},
+ situps:{label:"Situps",goal:250,step:10},
+ plank:{label:"Planke (min)",goal:15,step:1},
+ passes:{label:"Pasninger fotball",goal:10000,step:100}
+};
+
+let state=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+
+if(!state.progress) state.progress={};
+if(!state.goals) state.goals={};
+if(!state.checks) state.checks={};
+if(!state.finished) state.finished={};
+
+Object.keys(config).forEach(e=>{
+ if(!state.progress[e]) state.progress[e]=0;
+ if(!state.goals[e]) state.goals[e]=config[e].goal;
+});
+
+function save(){
+ localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+}
+
+function motivation(){
+ const msg=MOTIVATION[Math.floor(Math.random()*MOTIVATION.length)];
+ motivationDiv.textContent=msg;
+}
+
+function buildExercises(){
+
+ const container=document.getElementById("exercises");
+ container.innerHTML="";
+
+ Object.keys(config).forEach(key=>{
+
+  const goal=state.goals[key];
+  const value=state.progress[key];
+
+  const pct=value/goal*100;
+
+  if(value>=goal && !state.finished[key]){
+   motivation();
+   state.finished[key]=true;
+   save();
+  }
+
+  const div=document.createElement("div");
+  div.className="exercise";
+
+  div.innerHTML=`
+
+  <div class="bar">
+   <div class="fill" style="height:${pct}%"></div>
+   <div class="star ${pct>=100?"show":""}">⭐</div>
+  </div>
+
+  <div>
+
+  <strong>${config[key].label}</strong>
+  <div>${value} / ${goal} (${Math.round(pct)}%) 
+  <span class="egg">${pct>=75?"🐣🥚":pct>=50?"🥚":pct>=25?"🐣":""}</span>
+  </div>
+
+  <div class="mini">
+   <div style="width:${pct}%"></div>
+  </div>
+
+  <button class="minus">-${config[key].step}</button>
+  <button class="plus">+${config[key].step}</button>
+
+  </div>
+  `;
+
+  const minus=div.querySelector(".minus");
+  const plus=div.querySelector(".plus");
+
+  minus.onclick=()=>{
+   state.progress[key]=Math.max(0,value-config[key].step);
+   save();
+   buildExercises();
+  };
+
+  plus.onclick=()=>{
+   state.progress[key]=Math.min(goal,value+config[key].step);
+   save();
+   buildExercises();
+  };
+
+  container.appendChild(div);
+
+ });
+
+ checkAllComplete();
+
+}
+
+function checkAllComplete(){
+
+ const allExercisesDone=Object.keys(config)
+  .every(e=>state.progress[e]>=state.goals[e]);
+
+ const enduranceDone=
+  state.checks.run &&
+  state.checks.sprint &&
+  state.checks.interval;
+
+ if(allExercisesDone && enduranceDone){
+  bigMessage.style.display="block";
+ }
+
+}
+
+function buildGoalControls(){
+
+ const container=document.getElementById("goalControls");
+ container.innerHTML="";
+
+ Object.keys(config).forEach(key=>{
+
+  const row=document.createElement("div");
+
+  row.innerHTML=`
+   ${config[key].label}
+   <input type="number" value="${state.goals[key]}" id="goal_${key}">
+  `;
+
+  container.appendChild(row);
+
+  row.querySelector("input").onchange=e=>{
+   state.goals[key]=parseInt(e.target.value);
+   save();
+   buildExercises();
+  };
+
+ });
+
+}
+
+function setupName(){
+
+ const input=document.getElementById("nameInput");
+ const title=document.getElementById("title");
+
+ if(state.name){
+  input.value=state.name;
+  title.textContent=state.name+" sin påsketreningsplan";
+ }
+
+ input.oninput=e=>{
+  state.name=e.target.value;
+  title.textContent=e.target.value+" sin påsketreningsplan";
+  save();
+ };
+
+}
+
+function setupCheckboxes(){
+
+ ["run","sprint","interval"].forEach(id=>{
+
+  const el=document.getElementById(id);
+
+  if(state.checks[id]) el.checked=true;
+
+  el.onchange=()=>{
+   state.checks[id]=el.checked;
+   save();
+   checkAllComplete();
+  };
+
+ });
+
+}
+
+const motivationDiv=document.getElementById("motivation");
+
+setupName();
+setupCheckboxes();
+buildExercises();
+buildGoalControls();
+
+</script>
+
+</body>
+</html>
