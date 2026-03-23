@@ -3,377 +3,719 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Påsketreningsplan</title>
-
+<title>RASK Treningsplan</title>
 <style>
-:root{
-  --rask-green:#0b5d3b;
-  --rask-light:#2bb673;
-  --accent:#c8a85b;
+/* ── RASK farger ─────────────────────────────────────────────────────── */
+:root {
+  --rask-dark:   #0b5d3b;
+  --rask-green:  #2bb673;
+  --rask-gold:   #c8a85b;
+  --rask-light:  #e8f5ee;
+  --rask-bg:     #f3f6f4;
+  --rask-white:  #ffffff;
+  --rask-text:   #1a2e24;
+  --rask-muted:  #607060;
+  --rask-border: #c8ddd2;
+  --radius:      10px;
 }
 
-body{
-  margin:0;
-  font-family:system-ui;
-  background:#f5f7f6;
+/* ── Reset & base ────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+  background: var(--rask-bg);
+  color: var(--rask-text);
+  min-height: 100vh;
 }
 
-header{
-  background:var(--rask-green);
-  color:white;
-  padding:16px;
-  text-align:center;
+/* ── Header ──────────────────────────────────────────────────────────── */
+header {
+  background: var(--rask-dark);
+  padding: 20px 16px 16px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
-.logo{
-  height:60px;
-  margin-bottom:10px;
+.logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-.name-input{
-  margin-top:10px;
-  padding:6px;
-  border-radius:6px;
-  border:none;
+.logo-badge {
+  width: 44px; height: 44px;
+  background: var(--rask-gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 15px; color: var(--rask-dark);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 
-.wrapper{
-  max-width:1100px;
-  margin:auto;
-  padding:16px;
+#tittel {
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  font-weight: 800;
+  color: var(--rask-white);
+  letter-spacing: 0.02em;
 }
 
-.exercise{
-  display:grid;
-  grid-template-columns:70px 1fr;
-  gap:12px;
-  margin-bottom:18px;
-  align-items:center;
+.navn-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.bar{
-  height:130px;
-  width:50px;
-  background:#eee;
-  border-radius:10px;
-  display:flex;
-  align-items:flex-end;
-  overflow:hidden;
-  position:relative;
+.navn-row label {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
-.fill{
-  width:100%;
-  height:0%;
-  background:var(--rask-light);
-  transition:.3s;
+#navn-input {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 6px;
+  color: white;
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  width: 170px;
+  outline: none;
+}
+#navn-input::placeholder { color: rgba(255,255,255,0.5); }
+#navn-input:focus { border-color: var(--rask-gold); background: rgba(255,255,255,0.22); }
+
+/* ── Fremgang-summary ────────────────────────────────────────────────── */
+.summary-bar-wrap {
+  max-width: 860px;
+  margin: 14px auto 0;
+  padding: 0 16px;
 }
 
-.star{
-  position:absolute;
-  top:-10px;
-  right:-6px;
-  font-size:24px;
-  opacity:0;
+.summary-bar-bg {
+  background: rgba(255,255,255,0.18);
+  border-radius: 20px;
+  height: 8px;
+  overflow: hidden;
+}
+.summary-bar-fill {
+  height: 100%;
+  background: var(--rask-gold);
+  border-radius: 20px;
+  transition: width 0.4s ease;
+}
+.summary-text {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.78rem;
+  margin-top: 4px;
+  text-align: right;
 }
 
-.star.show{opacity:1;}
-
-.mini{
-  height:6px;
-  background:#eee;
-  border-radius:20px;
-  overflow:hidden;
-  margin-bottom:8px;
+/* ── Wrapper ─────────────────────────────────────────────────────────── */
+.wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
 }
 
-.mini div{
-  height:100%;
-  width:0%;
-  background:var(--rask-light);
+/* ── Kategori-kort ───────────────────────────────────────────────────── */
+.kat {
+  background: var(--rask-white);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(11,93,59,0.10);
+  margin-bottom: 20px;
+  overflow: hidden;
 }
 
-button{
-  border:none;
-  border-radius:8px;
-  padding:6px 10px;
-  font-weight:700;
-  cursor:pointer;
+.kat-header {
+  background: var(--rask-dark);
+  color: white;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.plus{background:var(--accent);}
-.minus{background:var(--rask-green);color:white;}
-
-.checkbox-area{
-  margin-top:30px;
+.kat-ikon {
+  font-size: 1.4rem;
+  line-height: 1;
 }
 
-.goal-form{
-  margin-top:30px;
+.kat-tittel {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
-input[type=number]{
-  width:80px;
-  padding:4px;
+.kat-fremgang {
+  margin-left: auto;
+  font-size: 0.82rem;
+  color: var(--rask-gold);
+  font-weight: 700;
 }
 
-.egg{
-  font-size:18px;
-  margin-left:6px;
+.kat-body {
+  padding: 6px 0;
 }
 
-#motivation{
-  text-align:center;
-  font-weight:bold;
-  color:var(--rask-green);
-  margin-top:20px;
+/* ── Øvelse-rad ──────────────────────────────────────────────────────── */
+.ovelse {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 14px;
+  padding: 12px 18px;
+  align-items: center;
+  border-bottom: 1px solid var(--rask-border);
+  transition: background 0.2s;
+}
+.ovelse:last-child { border-bottom: none; }
+.ovelse.ferdig { background: var(--rask-light); }
+
+/* Vertikal søyle */
+.soyle-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-#bigMessage{
-  position:fixed;
-  top:40%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:60px;
-  font-weight:900;
-  color:var(--rask-green);
-  display:none;
+.soyle-bg {
+  width: 28px;
+  height: 80px;
+  background: #e0ede7;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
 }
 
+.soyle-fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--rask-green), var(--rask-dark));
+  border-radius: 14px;
+  transition: height 0.4s ease;
+  min-height: 0;
+}
+
+.soyle-pct {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--rask-muted);
+}
+
+/* Info-del */
+.ovelse-info { }
+
+.ovelse-navn {
+  font-weight: 700;
+  font-size: 0.97rem;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ferdig-check {
+  display: none;
+  color: var(--rask-green);
+  font-size: 1rem;
+}
+.ovelse.ferdig .ferdig-check { display: inline; }
+
+.ovelse-teller {
+  font-size: 0.85rem;
+  color: var(--rask-muted);
+  margin-bottom: 8px;
+}
+
+/* Mini progress bar */
+.mini-bar {
+  height: 5px;
+  background: #dde9e4;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 9px;
+}
+.mini-bar div {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rask-green), var(--rask-dark));
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+/* Knapper */
+.knapper {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: none;
+  border-radius: 7px;
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  user-select: none;
+}
+.btn:active { transform: scale(0.94); }
+.btn.minus { background: var(--rask-dark); color: white; }
+.btn.minus:hover { opacity: 0.85; }
+.btn.plus  { background: var(--rask-gold); color: var(--rask-dark); }
+.btn.plus:hover  { opacity: 0.85; }
+
+/* ── Utholdenhet: toggle ──────────────────────────────────────────────── */
+.btn-toggle {
+  border: 2px solid var(--rask-dark);
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background: white;
+  color: var(--rask-dark);
+  transition: all 0.2s;
+}
+.btn-toggle.done {
+  background: var(--rask-dark);
+  color: white;
+  border-color: var(--rask-dark);
+}
+
+/* ── Fullfort-melding ─────────────────────────────────────────────────── */
+#fullfort {
+  display: none;
+  text-align: center;
+  background: linear-gradient(135deg, var(--rask-dark), #145e3e);
+  color: white;
+  border-radius: var(--radius);
+  padding: 30px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(11,93,59,0.35);
+}
+#fullfort .emoji { font-size: 3.5rem; }
+#fullfort h2 { font-size: 1.8rem; font-weight: 900; margin: 8px 0 4px; color: var(--rask-gold); }
+#fullfort p { color: rgba(255,255,255,0.85); font-size: 0.95rem; }
+
+/* ── Mål-editor ──────────────────────────────────────────────────────── */
+.maal-editor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #d0ddd8;
+  flex-wrap: wrap;
+}
+.maal-editor label {
+  font-size: 0.75rem;
+  color: var(--rask-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.maal-editor input[type=number] {
+  width: 70px;
+  padding: 4px 6px;
+  border: 1.5px solid #b0c8bc;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--rask-dark);
+  text-align: center;
+  outline: none;
+}
+.maal-editor input[type=number]:focus { border-color: var(--rask-green); }
+.btn-maal {
+  background: var(--rask-dark);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 11px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-maal:hover { opacity: 0.82; }
+
+/* ── Nullstill ───────────────────────────────────────────────────────── */
+.nullstill-wrap {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.btn-nullstill {
+  background: none;
+  border: 1.5px solid #aaa;
+  color: #888;
+  border-radius: 7px;
+  padding: 7px 18px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-nullstill:hover { border-color: var(--rask-dark); color: var(--rask-dark); }
+.btn-nullstill-alt {
+  background: none;
+  border: 1.5px solid #d9534f;
+  color: #d9534f;
+  border-radius: 7px;
+  padding: 7px 18px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-nullstill-alt:hover { background: #d9534f; color: white; }
+
+/* ── Responsivt ──────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .ovelse { grid-template-columns: 46px 1fr; gap: 10px; padding: 10px 12px; }
+  .soyle-bg { width: 22px; height: 65px; }
+  .btn { padding: 5px 9px; font-size: 0.80rem; }
+}
 </style>
 </head>
-
 <body>
 
+<!-- ── HEADER ─────────────────────────────────────────────────────────── -->
 <header>
-
-<img class="logo" src="https://www.raskfotball.no/wp-content/uploads/2020/03/rask-logo.png">
-
-<h2 id="title">Påsketreningsplan</h2>
-
-<input class="name-input" id="nameInput" placeholder="Skriv fornavn">
-
+  <div class="logo-row">
+    <div class="logo-badge">RASK</div>
+    <div id="tittel">Treningsplan</div>
+  </div>
+  <div class="navn-row">
+    <label for="navn-input">Ditt navn:</label>
+    <input id="navn-input" type="text" placeholder="Skriv navn her…" maxlength="30" autocomplete="off">
+  </div>
+  <div class="summary-bar-wrap">
+    <div class="summary-bar-bg">
+      <div class="summary-bar-fill" id="total-bar" style="width:0%"></div>
+    </div>
+    <div class="summary-text" id="total-tekst">0 % fullført</div>
+  </div>
 </header>
 
-<div class="wrapper" id="exercises"></div>
+<div class="wrapper">
 
-<div id="motivation"></div>
+  <!-- Fullfort -->
+  <div id="fullfort">
+    <div class="emoji">🏆</div>
+    <h2>BRA JOBBA!</h2>
+    <p id="fullfort-navn">Du har fullført hele treningsprogrammet!</p>
+  </div>
 
-<div class="wrapper checkbox-area">
+  <!-- Kategorier genereres av JS -->
+  <div id="container"></div>
 
-<h3>Utholdenhet – 3 forskjellige dager</h3>
-
-<label><input type="checkbox" id="run"> Rolig løpetur minst 5 km / 30 min</label><br>
-<label><input type="checkbox" id="sprint"> 20 spurter i oppoverbakke</label><br>
-<label><input type="checkbox" id="interval"> Intervall løping (4 × 4 min)</label>
-
-</div>
-
-<div class="wrapper goal-form">
-
-<h3>Juster mål (grenser)</h3>
-
-<div id="goalControls"></div>
+  <div class="nullstill-wrap">
+    <button class="btn-nullstill" onclick="nullstillFremgang()">↺ Nullstill fremgang</button>
+    <button class="btn-nullstill-alt" onclick="nullstillAlt()">✕ Nullstill alt (inkl. mål)</button>
+  </div>
 
 </div>
-
-<div id="bigMessage">BRA JOBBA!</div>
 
 <script>
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────────────────────────────────────
+const STORAGE = "rask_treningsplan_v2";
 
-const STORAGE_KEY="rask_easter_plan";
-
-const MOTIVATION=[
-"Fantastisk innsats!",
-"Sterkt jobbet!",
-"Du blir sterkere!",
-"Rått!",
-"Kjempebra!",
-"Fortsett sånn!",
-"Dette lover bra!"
+const kategorier = [
+  {
+    id: "ball",
+    tittel: "Balltekniske øvelser",
+    ikon: "⚽",
+    type: "teller",
+    ovelser: [
+      { id:"innside",    navn:"Pasninger mot vegg – innsiden av fot",  maal:2500, steg:100  },
+      { id:"utside",     navn:"Pasninger mot vegg – utsiden av fot",   maal:2500, steg:1000 },
+      { id:"saledrag",   navn:"Såledragninger i firkant rundt kjegle", maal:2500, steg:100  },
+      { id:"taptoe",     navn:'Tap-toe',                               maal:2500, steg:100  },
+      { id:"oversteg",   navn:"Overstegsfinter",                       maal:300,  steg:50   },
+    ]
+  },
+  {
+    id: "styrke",
+    tittel: "Styrkeøvelser",
+    ikon: "💪",
+    type: "teller",
+    ovelser: [
+      { id:"situps",     navn:"Situps",                        maal:300, steg:10 },
+      { id:"pushups",    navn:"Pushups",                       maal:300, steg:10 },
+      { id:"rumpa",      navn:"Sitte på rumpa (veggsit, sek)", maal:300, steg:10 },
+      { id:"sidevekt",   navn:"Bevegelse til side med vekt",   maal:150, steg:30 },
+      { id:"kneboj",     navn:"Knebøy med rett rygg",          maal:300, steg:30 },
+    ]
+  },
+  {
+    id: "utholdenhet",
+    tittel: "Utholdenhetsøvelser",
+    ikon: "🏃",
+    type: "toggle",
+    ovelser: [
+      { id:"jogg30",     navn:"Rolig jogg 30 min + 5 spurter (30 m, slak nedoverbakke)",  maal:1 },
+      { id:"bakke20",    navn:"15 min jogg + 20 spurter i oppoverbakke (ca. 20 m)",        maal:1 },
+      { id:"intervall",  navn:"Intervall: 10 min oppvarming + 4 × 2 min intervall",        maal:1 },
+    ]
+  }
 ];
 
-let config={
- pushups:{label:"Pushups",goal:250,step:10},
- situps:{label:"Situps",goal:250,step:10},
- plank:{label:"Planke (min)",goal:15,step:1},
- passes:{label:"Pasninger fotball",goal:10000,step:100}
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+let state = JSON.parse(localStorage.getItem(STORAGE) || "{}");
+if (!state.progress) state.progress = {};
+if (!state.navn)     state.navn     = "";
+if (!state.maaler)   state.maaler   = {};
 
-let state=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+// Sikre alle øvelser finnes i state
+kategorier.forEach(k => k.ovelser.forEach(o => {
+  if (state.progress[o.id] === undefined) state.progress[o.id] = 0;
+  if (state.maaler[o.id]   === undefined) state.maaler[o.id]   = o.maal;
+}));
 
-if(!state.progress) state.progress={};
-if(!state.goals) state.goals={};
-if(!state.checks) state.checks={};
-if(!state.finished) state.finished={};
+// Hjelpe-funksjon: hent effektivt mål (brukerens eller standard)
+function getMaal(id) {
+  return state.maaler[id] ?? kategorier.flatMap(k => k.ovelser).find(o => o.id === id)?.maal ?? 1;
+}
 
-Object.keys(config).forEach(e=>{
- if(!state.progress[e]) state.progress[e]=0;
- if(!state.goals[e]) state.goals[e]=config[e].goal;
+function save() {
+  localStorage.setItem(STORAGE, JSON.stringify(state));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NAVN
+// ─────────────────────────────────────────────────────────────────────────────
+const navnInput = document.getElementById("navn-input");
+navnInput.value = state.navn;
+oppdaterTittel();
+
+navnInput.addEventListener("input", () => {
+  state.navn = navnInput.value.trim();
+  save();
+  oppdaterTittel();
 });
 
-function save(){
- localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+function oppdaterTittel() {
+  const n = state.navn;
+  document.getElementById("tittel").textContent =
+    n ? n + " sin treningsplan" : "RASK Treningsplan";
+  const fp = document.getElementById("fullfort-navn");
+  if (fp) fp.textContent =
+    n ? n + " har fullført hele treningsprogrammet! 🎉" : "Du har fullført hele treningsprogrammet!";
 }
 
-function motivation(){
- const msg=MOTIVATION[Math.floor(Math.random()*MOTIVATION.length)];
- motivationDiv.textContent=msg;
+// ─────────────────────────────────────────────────────────────────────────────
+// TOTAL FREMGANG
+// ─────────────────────────────────────────────────────────────────────────────
+function oppdaterTotal() {
+  let totMaal = 0, totNaa = 0, allFerdig = true;
+  kategorier.forEach(k => k.ovelser.forEach(o => {
+    const m = getMaal(o.id);
+    const v = state.progress[o.id];
+    totMaal += m;
+    totNaa  += Math.min(v, m);
+    if (v < m) allFerdig = false;
+  }));
+  const pct = Math.round(totNaa / totMaal * 100);
+  document.getElementById("total-bar").style.width   = pct + "%";
+  document.getElementById("total-tekst").textContent  = pct + " % fullført";
+  document.getElementById("fullfort").style.display = allFerdig ? "block" : "none";
+  oppdaterTittel();
 }
 
-function buildExercises(){
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────────────────────
+function render() {
+  const container = document.getElementById("container");
+  container.innerHTML = "";
 
- const container=document.getElementById("exercises");
- container.innerHTML="";
+  kategorier.forEach(kat => {
+    // ── Beregn kategori-fremgang ──
+    let katMaal = 0, katNaa = 0;
+    kat.ovelser.forEach(o => {
+      const m = getMaal(o.id);
+      katMaal += m;
+      katNaa  += Math.min(state.progress[o.id], m);
+    });
+    const katPct = Math.round(katNaa / katMaal * 100);
 
- Object.keys(config).forEach(key=>{
+    // ── Kategori-container ──
+    const kortEl = document.createElement("div");
+    kortEl.className = "kat";
 
-  const goal=state.goals[key];
-  const value=state.progress[key];
+    // Header
+    const hdr = document.createElement("div");
+    hdr.className = "kat-header";
+    hdr.innerHTML = `
+      <span class="kat-ikon">${kat.ikon}</span>
+      <span class="kat-tittel">${kat.tittel}</span>
+      <span class="kat-fremgang">${katPct} %</span>
+    `;
+    kortEl.appendChild(hdr);
 
-  const pct=value/goal*100;
+    // Body
+    const body = document.createElement("div");
+    body.className = "kat-body";
 
-  if(value>=goal && !state.finished[key]){
-   motivation();
-   state.finished[key]=true;
-   save();
-  }
+    // ── Øvelser ──
+    kat.ovelser.forEach(o => {
+      const maal = getMaal(o.id);
+      const v   = state.progress[o.id];
+      const pct = Math.min(v / maal * 100, 100);
+      const er_ferdig = v >= maal;
 
-  const div=document.createElement("div");
-  div.className="exercise";
+      const rad = document.createElement("div");
+      rad.className = "ovelse" + (er_ferdig ? " ferdig" : "");
 
-  div.innerHTML=`
+      if (kat.type === "teller") {
+        // ── Telleøvelse ──
+        rad.innerHTML = `
+          <div class="soyle-wrap">
+            <div class="soyle-bg">
+              <div class="soyle-fill" style="height:${pct}%"></div>
+            </div>
+            <div class="soyle-pct">${Math.round(pct)}%</div>
+          </div>
+          <div class="ovelse-info">
+            <div class="ovelse-navn">
+              ${o.navn}
+              <span class="ferdig-check">✔</span>
+            </div>
+            <div class="ovelse-teller">
+              <strong>${v}</strong> / ${maal}
+            </div>
+            <div class="mini-bar"><div style="width:${pct}%"></div></div>
+            <div class="knapper">
+              <button class="btn minus" data-id="${o.id}" data-delta="${-o.steg}">−${o.steg}</button>
+              <button class="btn plus"  data-id="${o.id}" data-delta="${+o.steg}">+${o.steg}</button>
+            </div>
+            <div class="maal-editor">
+              <label>Mål:</label>
+              <input type="number" class="maal-input" data-id="${o.id}" value="${maal}" min="1" step="1">
+              <button class="btn-maal" data-id="${o.id}">Oppdater</button>
+            </div>
+          </div>`;
+      } else {
+        // ── Toggle-øvelse (utholdenhet) ──
+        rad.innerHTML = `
+          <div class="soyle-wrap">
+            <div class="soyle-bg">
+              <div class="soyle-fill" style="height:${pct}%"></div>
+            </div>
+            <div class="soyle-pct">${er_ferdig ? "100%" : "0%"}</div>
+          </div>
+          <div class="ovelse-info">
+            <div class="ovelse-navn">
+              ${o.navn}
+              <span class="ferdig-check">✔</span>
+            </div>
+            <div class="ovelse-teller">
+              ${er_ferdig ? "<strong>Fullført ✓</strong>" : "Ikke startet"}
+            </div>
+            <div class="mini-bar"><div style="width:${pct}%"></div></div>
+            <div class="knapper">
+              <button class="btn-toggle${er_ferdig ? " done" : ""}" data-id="${o.id}">
+                ${er_ferdig ? "✔ Gjort" : "Marker som gjort"}
+              </button>
+              ${er_ferdig ? `<button class="btn minus" data-id="${o.id}" data-delta="-1" style="font-size:0.75rem;padding:5px 8px">Angre</button>` : ""}
+            </div>
+          </div>`;
+      }
 
-  <div class="bar">
-   <div class="fill" style="height:${pct}%"></div>
-   <div class="star ${pct>=100?"show":""}">⭐</div>
-  </div>
+      body.appendChild(rad);
+    });
 
-  <div>
+    kortEl.appendChild(body);
+    container.appendChild(kortEl);
+  });
 
-  <strong>${config[key].label}</strong>
-  <div>${value} / ${goal} (${Math.round(pct)}%) 
-  <span class="egg">${pct>=75?"🐣🥚":pct>=50?"🥚":pct>=25?"🐣":""}</span>
-  </div>
+  // ── Event listeners (delegert) ──
+  container.querySelectorAll(".btn[data-delta]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id    = btn.dataset.id;
+      const delta = parseInt(btn.dataset.delta);
+      const maal  = getMaal(id);
+      state.progress[id] = Math.max(0, Math.min(maal, state.progress[id] + delta));
+      save();
+      render();
+    });
+  });
 
-  <div class="mini">
-   <div style="width:${pct}%"></div>
-  </div>
+  container.querySelectorAll(".btn-toggle").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      state.progress[id] = state.progress[id] >= 1 ? 0 : 1;
+      save();
+      render();
+    });
+  });
 
-  <button class="minus">-${config[key].step}</button>
-  <button class="plus">+${config[key].step}</button>
+  // ── Mål-oppdatering ──
+  container.querySelectorAll(".btn-maal").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id  = btn.dataset.id;
+      const inp = container.querySelector(`.maal-input[data-id="${id}"]`);
+      const nyMaal = parseInt(inp.value);
+      if (!nyMaal || nyMaal < 1) return;
+      state.maaler[id] = nyMaal;
+      // Kapp fremgang til nytt mål
+      if (state.progress[id] > nyMaal) state.progress[id] = nyMaal;
+      save();
+      render();
+    });
+  });
 
-  </div>
-  `;
+  // Tillat Enter i mål-feltet
+  container.querySelectorAll(".maal-input").forEach(inp => {
+    inp.addEventListener("keydown", e => {
+      if (e.key === "Enter") container.querySelector(`.btn-maal[data-id="${inp.dataset.id}"]`).click();
+    });
+  });
 
-  const minus=div.querySelector(".minus");
-  const plus=div.querySelector(".plus");
-
-  minus.onclick=()=>{
-   state.progress[key]=Math.max(0,value-config[key].step);
-   save();
-   buildExercises();
-  };
-
-  plus.onclick=()=>{
-   state.progress[key]=Math.min(goal,value+config[key].step);
-   save();
-   buildExercises();
-  };
-
-  container.appendChild(div);
-
- });
-
- checkAllComplete();
-
+  oppdaterTotal();
 }
 
-function checkAllComplete(){
-
- const allExercisesDone=Object.keys(config)
-  .every(e=>state.progress[e]>=state.goals[e]);
-
- const enduranceDone=
-  state.checks.run &&
-  state.checks.sprint &&
-  state.checks.interval;
-
- if(allExercisesDone && enduranceDone){
-  bigMessage.style.display="block";
- }
-
-}
-
-function buildGoalControls(){
-
- const container=document.getElementById("goalControls");
- container.innerHTML="";
-
- Object.keys(config).forEach(key=>{
-
-  const row=document.createElement("div");
-
-  row.innerHTML=`
-   ${config[key].label}
-   <input type="number" value="${state.goals[key]}" id="goal_${key}">
-  `;
-
-  container.appendChild(row);
-
-  row.querySelector("input").onchange=e=>{
-   state.goals[key]=parseInt(e.target.value);
-   save();
-   buildExercises();
-  };
-
- });
-
-}
-
-function setupName(){
-
- const input=document.getElementById("nameInput");
- const title=document.getElementById("title");
-
- if(state.name){
-  input.value=state.name;
-  title.textContent=state.name+" sin påsketreningsplan";
- }
-
- input.oninput=e=>{
-  state.name=e.target.value;
-  title.textContent=e.target.value+" sin påsketreningsplan";
+// ─────────────────────────────────────────────────────────────────────────────
+// NULLSTILL
+// ─────────────────────────────────────────────────────────────────────────────
+function nullstillFremgang() {
+  if (!confirm("Nullstille all fremgang? (Navn og mål beholdes)")) return;
+  kategorier.forEach(k => k.ovelser.forEach(o => { state.progress[o.id] = 0; }));
   save();
- };
-
+  render();
 }
 
-function setupCheckboxes(){
-
- ["run","sprint","interval"].forEach(id=>{
-
-  const el=document.getElementById(id);
-
-  if(state.checks[id]) el.checked=true;
-
-  el.onchange=()=>{
-   state.checks[id]=el.checked;
-   save();
-   checkAllComplete();
-  };
-
- });
-
+function nullstillAlt() {
+  if (!confirm("Nullstille ALT – fremgang, mål og navn? Dette kan ikke angres.")) return;
+  state.progress = {};
+  state.maaler   = {};
+  state.navn     = "";
+  kategorier.forEach(k => k.ovelser.forEach(o => {
+    state.progress[o.id] = 0;
+    state.maaler[o.id]   = o.maal;
+  }));
+  document.getElementById("navn-input").value = "";
+  save();
+  oppdaterTittel();
+  render();
 }
 
-const motivationDiv=document.getElementById("motivation");
-
-setupName();
-setupCheckboxes();
-buildExercises();
-buildGoalControls();
-
+// ─────────────────────────────────────────────────────────────────────────────
+// START
+// ─────────────────────────────────────────────────────────────────────────────
+render();
 </script>
 
 </body>
