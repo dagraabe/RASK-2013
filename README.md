@@ -1,2 +1,2 @@
 # RASK-2013
-Påsketrening for RASK G2013
+Treningsapp for RASK G2013
